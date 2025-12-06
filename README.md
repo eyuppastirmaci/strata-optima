@@ -9,6 +9,12 @@ A high-performance CLI tool for organizing messy directories. It detects duplica
 - **Dry-Run Mode** - Preview changes before applying them
 - **HTML Reports** - Generates detailed operation reports
 
+## Build
+
+```bash
+./gradlew build
+```
+
 ## Usage
 
 ```bash
@@ -22,5 +28,17 @@ strataoptima organize --path "./Downloads" --strategy DATE_AND_TYPE
 strataoptima organize --path "./Downloads" --dry-run
 ```
 
+## Running Tests
 
-Under active development currently implementing core analysis engine.
+```bash
+# Run all tests
+./gradlew test
+
+# Run specific test class
+./gradlew test --tests "com.eyuppastirmaci.core.engine.FileCrawlerTest"
+
+# Run with verbose output
+./gradlew test --info
+```
+
+Under active development
