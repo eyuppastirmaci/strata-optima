@@ -204,3 +204,25 @@ The project includes a comprehensive test suite covering file detection, hashing
 ./gradlew test --info
 ```
 
+## Planned Features
+
+- [ ] **HTML Report** - Generate detailed HTML reports with charts and statistics
+- [ ] **Delete Duplicates** - Option to automatically remove duplicate files (`--delete-copies`)
+- [ ] **Undo Support** - Revert the last organize operation
+- [ ] **Filter by Size** - Process only files within a size range (`--min-size`, `--max-size`)
+- [ ] **Filter by Date** - Process files modified within a date range (`--after`, `--before`)
+- [ ] **Filter by Extension** - Process only specific file types (`--include "*.jpg,*.png"`)
+- [ ] **Exclude Patterns** - Skip files/folders matching patterns (`--exclude "node_modules"`)
+- [ ] **Progress Bar** - Visual progress indicator for large directories
+- [ ] **Watch Mode** - Monitor a folder and auto-organize new files (`--watch`)
+- [ ] **Custom Rules** - User-defined organization rules via config file
+- [ ] **JSON Export** - Export analysis results as JSON (`--output results.json`)
+- [ ] **Interactive Mode** - Prompt for confirmation on each file (`--interactive`)
+- [ ] **Empty Folder Cleanup** - Remove empty directories after organizing
+- [ ] **Large File Finder** - List the largest files in a directory (`--top 10`)
+- [ ] **Config File Support** - Save preferences in `.strataoptima.yml`
+- [ ] **Semantic Organization** - Content-aware file organization using local CLIP model
+- [ ] **Organization Modes** - Choose how files are organized (`--mode`):
+    - `categorical` - By file extension only (current default behavior)
+    - `semantic` - By content using local AI/CLIP model (e.g., `Images/Dogs/`, `Documents/Invoices/`)
+    - `hybrid` - Categorical first, then semantic subcategories (e.g., `Images/Animals/Dogs/`)
