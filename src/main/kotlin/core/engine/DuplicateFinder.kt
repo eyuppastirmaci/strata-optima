@@ -1,9 +1,11 @@
 package com.eyuppastirmaci.core.engine
 
+import com.eyuppastirmaci.config.AppConfig
 import com.eyuppastirmaci.core.analysis.FileFingerPrint
 import com.eyuppastirmaci.model.DuplicateGroup
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 
 /**
@@ -16,14 +18,23 @@ object DuplicateFinder {
      * Finds all duplicate files in the given list.
      * Returns a map of hash -> DuplicateGroup (only for files with duplicates).
      */
-    suspend fun find(files: List<File>): Map<String, DuplicateGroup> = withContext(Dispatchers.IO) {
-        // Group files by their content hash
-        val hashGroups = files
-            .filter { it.isFile }
-            .groupBy { FileFingerPrint.generate(it) }
-            .filterValues { it.size > 1 } // Keep only duplicates
+    suspend fun find(files: List<File>): Map<String, DuplicateGroup> = coroutineScope {
+        val validFiles = files.filter { it.isFile }
 
-        // Convert to DuplicateGroup (oldest = original)
+        // Compute hashes in parallel chunks
+        val fileHashPairs = validFiles
+            .chunked(AppConfig.CHUNK_SIZE)
+            .flatMap { chunk ->
+                chunk.map { file ->
+                    async { file to FileFingerPrint.generate(file) }
+                }.awaitAll()
+            }
+
+        // Group by hash
+        val hashGroups = fileHashPairs
+            .groupBy({ it.second }, { it.first })
+            .filterValues { it.size > 1 }
+
         hashGroups.mapValues { (_, groupedFiles) ->
             val sorted = groupedFiles.sortedBy { it.lastModified() }
             DuplicateGroup(

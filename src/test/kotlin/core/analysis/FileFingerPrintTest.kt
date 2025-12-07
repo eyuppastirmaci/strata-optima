@@ -2,6 +2,7 @@ package com.eyuppastirmaci.core.analysis
 
 import com.eyuppastirmaci.model.HashAlgorithm
 import com.eyuppastirmaci.util.TestFileUtil.createFile
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -19,7 +20,7 @@ class FileFingerPrintTest {
     inner class Md5Tests {
 
         @Test
-        fun `should compute correct MD5 checksum`(@TempDir tempDir: Path) {
+        fun `should compute correct MD5 checksum`(@TempDir tempDir: Path) = runTest {
             // Given: a file with known content
             val file = createFile(tempDir, "test.txt", "Refactoring is Fun")
             val expected = "6cf5b0650064a7ec46942e72e92e612e"
@@ -32,7 +33,7 @@ class FileFingerPrintTest {
         }
 
         @Test
-        fun `should use MD5 as default algorithm`(@TempDir tempDir: Path) {
+        fun `should use MD5 as default algorithm`(@TempDir tempDir: Path) = runTest {
             // Given: a file with known content
             val file = createFile(tempDir, "default.txt", "Hello")
             val expectedMd5 = FileFingerPrint.generate(file, HashAlgorithm.MD5)
@@ -50,7 +51,7 @@ class FileFingerPrintTest {
     inner class Sha256Tests {
 
         @Test
-        fun `should compute correct SHA-256 checksum`(@TempDir tempDir: Path) {
+        fun `should compute correct SHA-256 checksum`(@TempDir tempDir: Path) = runTest {
             // Given: a file with known content
             val file = createFile(tempDir, "sha256.txt", "Kotlin")
             val expected = "c78f6c97923e81a2f04f09c5e87b69e085c1e47066a1136b5f590bfde696e2eb"
@@ -68,7 +69,7 @@ class FileFingerPrintTest {
     inner class Sha1Tests {
 
         @Test
-        fun `should compute correct SHA-1 checksum`(@TempDir tempDir: Path) {
+        fun `should compute correct SHA-1 checksum`(@TempDir tempDir: Path) = runTest {
             // Given: a file with known content
             val file = createFile(tempDir, "sha1.txt", "Test")
             val expected = "640ab2bae07bedc4c163f679a746f7ab7fb5d1fa"
@@ -86,7 +87,7 @@ class FileFingerPrintTest {
     inner class EdgeCaseTests {
 
         @Test
-        fun `should return empty string for non-existent file`() {
+        fun `should return empty string for non-existent file`() = runTest {
             // Given: a file that does not exist
             val file = File("non_existent_file.txt")
 
@@ -98,7 +99,7 @@ class FileFingerPrintTest {
         }
 
         @Test
-        fun `should return empty string for directory`(@TempDir tempDir: Path) {
+        fun `should return empty string for directory`(@TempDir tempDir: Path) = runTest {
             // Given: a directory instead of a file
             val directory = tempDir.toFile()
 
@@ -110,10 +111,10 @@ class FileFingerPrintTest {
         }
 
         @Test
-        fun `should handle empty file`(@TempDir tempDir: Path) {
+        fun `should handle empty file`(@TempDir tempDir: Path) = runTest {
             // Given: an empty file
             val file = createFile(tempDir, "empty.txt", "")
-            val expectedMd5 = "d41d8cd98f00b204e9800998ecf8427e" // MD5 of empty content
+            val expectedMd5 = "d41d8cd98f00b204e9800998ecf8427e"
 
             // When: generating fingerprint
             val actual = FileFingerPrint.generate(file, HashAlgorithm.MD5)
@@ -123,7 +124,7 @@ class FileFingerPrintTest {
         }
 
         @Test
-        fun `should produce 32 character hex string for MD5`(@TempDir tempDir: Path) {
+        fun `should produce 32 character hex string for MD5`(@TempDir tempDir: Path) = runTest {
             // Given: any file with content
             val file = createFile(tempDir, "length.txt", "any content")
 
@@ -136,7 +137,7 @@ class FileFingerPrintTest {
         }
 
         @Test
-        fun `should produce 64 character hex string for SHA-256`(@TempDir tempDir: Path) {
+        fun `should produce 64 character hex string for SHA-256`(@TempDir tempDir: Path) = runTest {
             // Given: any file with content
             val file = createFile(tempDir, "length256.txt", "any content")
 
@@ -154,7 +155,7 @@ class FileFingerPrintTest {
     inner class ConsistencyTests {
 
         @Test
-        fun `should produce identical hash for same content`(@TempDir tempDir: Path) {
+        fun `should produce identical hash for same content`(@TempDir tempDir: Path) = runTest {
             // Given: two files with identical content
             val content = "duplicate content"
             val file1 = createFile(tempDir, "file1.txt", content)
@@ -169,7 +170,7 @@ class FileFingerPrintTest {
         }
 
         @Test
-        fun `should produce different hash for different content`(@TempDir tempDir: Path) {
+        fun `should produce different hash for different content`(@TempDir tempDir: Path) = runTest {
             // Given: two files with different content
             val file1 = createFile(tempDir, "diff1.txt", "content A")
             val file2 = createFile(tempDir, "diff2.txt", "content B")
@@ -182,6 +183,4 @@ class FileFingerPrintTest {
             assertTrue(hash1 != hash2)
         }
     }
-
-
 }
