@@ -18,10 +18,4 @@ object TestFileUtil {
         return path.toFile()
     }
 
-    /**
-     * Creates an empty temporary file.
-     */
-    fun createEmptyFile(dir: Path, name: String): File {
-        return dir.resolve(name).toFile().apply { createNewFile() }
-    }
 }

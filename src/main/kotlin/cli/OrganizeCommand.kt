@@ -4,7 +4,6 @@ import com.eyuppastirmaci.core.engine.FileCrawler
 import com.eyuppastirmaci.core.process.FileOrganizer
 import com.eyuppastirmaci.model.OrganizeResult
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -13,10 +12,6 @@ import kotlinx.coroutines.runBlocking
 import java.nio.file.Path
 import kotlin.io.path.pathString
 
-/**
- * Organizes files into categorized folders.
- * Default is dry-run (simulation) for safety.
- */
 class OrganizeCommand : CliktCommand(
     name = "organize",
     help = "Organize files into categorized folders (Images, Documents, etc.)"
@@ -25,16 +20,17 @@ class OrganizeCommand : CliktCommand(
         .path(mustExist = true, canBeFile = false)
         .required()
 
-    private val targetPath: Path by option("-t", "--target", help = "Target directory for organized files")
+    private val targetPath: Path? by option("-t", "--target", help = "Target directory for organized files")
         .path()
-        .default(Path.of("./organized"))
 
     private val execute: Boolean by option("-e", "--execute", help = "Actually move files (default is dry-run)")
         .flag(default = false)
 
     override fun run() = runBlocking {
         val sourceDir = sourcePath.toFile()
-        val targetDir = targetPath.toFile()
+
+        val targetDir = targetPath?.toFile() ?: sourceDir.resolve("organized")
+
         val dryRun = !execute
 
         if (dryRun) {
@@ -45,7 +41,7 @@ class OrganizeCommand : CliktCommand(
         }
         echo()
         echo("Source: ${sourcePath.pathString}")
-        echo("Target: ${targetPath.pathString}")
+        echo("Target: ${targetDir.absolutePath}")
         echo()
 
         val files = FileCrawler.scan(sourceDir)
@@ -63,6 +59,10 @@ class OrganizeCommand : CliktCommand(
         val results = mutableListOf<OrganizeResult>()
 
         files.forEach { file ->
+            if (file.absolutePath.startsWith(targetDir.absolutePath)) {
+                return@forEach
+            }
+
             val result = FileOrganizer.organize(file, targetDir, dryRun)
 
             result.fold(
