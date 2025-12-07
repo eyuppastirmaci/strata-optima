@@ -17,6 +17,9 @@ dependencies {
     // Enables asynchronous, non-blocking parallel operations (Coroutines).
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
+    // Coroutines testing support
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+
     // Handles command-line argument parsing and CLI interface creation.
     implementation("com.github.ajalt.clikt:clikt:4.2.2")
 }

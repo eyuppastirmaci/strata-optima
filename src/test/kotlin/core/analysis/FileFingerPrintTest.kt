@@ -1,6 +1,7 @@
 package com.eyuppastirmaci.core.analysis
 
 import com.eyuppastirmaci.model.HashAlgorithm
+import com.eyuppastirmaci.util.TestFileUtil.createFile
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.nio.file.Files
 import java.nio.file.Path
 
 @DisplayName("FileFingerPrint")
@@ -21,7 +21,7 @@ class FileFingerPrintTest {
         @Test
         fun `should compute correct MD5 checksum`(@TempDir tempDir: Path) {
             // Given: a file with known content
-            val file = createTempFile(tempDir, "test.txt", "Refactoring is Fun")
+            val file = createFile(tempDir, "test.txt", "Refactoring is Fun")
             val expected = "6cf5b0650064a7ec46942e72e92e612e"
 
             // When: generating MD5 fingerprint
@@ -34,7 +34,7 @@ class FileFingerPrintTest {
         @Test
         fun `should use MD5 as default algorithm`(@TempDir tempDir: Path) {
             // Given: a file with known content
-            val file = createTempFile(tempDir, "default.txt", "Hello")
+            val file = createFile(tempDir, "default.txt", "Hello")
             val expectedMd5 = FileFingerPrint.generate(file, HashAlgorithm.MD5)
 
             // When: generating fingerprint without specifying algorithm
@@ -52,7 +52,7 @@ class FileFingerPrintTest {
         @Test
         fun `should compute correct SHA-256 checksum`(@TempDir tempDir: Path) {
             // Given: a file with known content
-            val file = createTempFile(tempDir, "sha256.txt", "Kotlin")
+            val file = createFile(tempDir, "sha256.txt", "Kotlin")
             val expected = "c78f6c97923e81a2f04f09c5e87b69e085c1e47066a1136b5f590bfde696e2eb"
 
             // When: generating SHA-256 fingerprint
@@ -70,7 +70,7 @@ class FileFingerPrintTest {
         @Test
         fun `should compute correct SHA-1 checksum`(@TempDir tempDir: Path) {
             // Given: a file with known content
-            val file = createTempFile(tempDir, "sha1.txt", "Test")
+            val file = createFile(tempDir, "sha1.txt", "Test")
             val expected = "640ab2bae07bedc4c163f679a746f7ab7fb5d1fa"
 
             // When: generating SHA-1 fingerprint
@@ -112,7 +112,7 @@ class FileFingerPrintTest {
         @Test
         fun `should handle empty file`(@TempDir tempDir: Path) {
             // Given: an empty file
-            val file = createTempFile(tempDir, "empty.txt", "")
+            val file = createFile(tempDir, "empty.txt", "")
             val expectedMd5 = "d41d8cd98f00b204e9800998ecf8427e" // MD5 of empty content
 
             // When: generating fingerprint
@@ -125,7 +125,7 @@ class FileFingerPrintTest {
         @Test
         fun `should produce 32 character hex string for MD5`(@TempDir tempDir: Path) {
             // Given: any file with content
-            val file = createTempFile(tempDir, "length.txt", "any content")
+            val file = createFile(tempDir, "length.txt", "any content")
 
             // When: generating MD5 fingerprint
             val result = FileFingerPrint.generate(file, HashAlgorithm.MD5)
@@ -138,7 +138,7 @@ class FileFingerPrintTest {
         @Test
         fun `should produce 64 character hex string for SHA-256`(@TempDir tempDir: Path) {
             // Given: any file with content
-            val file = createTempFile(tempDir, "length256.txt", "any content")
+            val file = createFile(tempDir, "length256.txt", "any content")
 
             // When: generating SHA-256 fingerprint
             val result = FileFingerPrint.generate(file, HashAlgorithm.SHA256)
@@ -157,8 +157,8 @@ class FileFingerPrintTest {
         fun `should produce identical hash for same content`(@TempDir tempDir: Path) {
             // Given: two files with identical content
             val content = "duplicate content"
-            val file1 = createTempFile(tempDir, "file1.txt", content)
-            val file2 = createTempFile(tempDir, "file2.txt", content)
+            val file1 = createFile(tempDir, "file1.txt", content)
+            val file2 = createFile(tempDir, "file2.txt", content)
 
             // When: generating fingerprints for both
             val hash1 = FileFingerPrint.generate(file1, HashAlgorithm.MD5)
@@ -171,8 +171,8 @@ class FileFingerPrintTest {
         @Test
         fun `should produce different hash for different content`(@TempDir tempDir: Path) {
             // Given: two files with different content
-            val file1 = createTempFile(tempDir, "diff1.txt", "content A")
-            val file2 = createTempFile(tempDir, "diff2.txt", "content B")
+            val file1 = createFile(tempDir, "diff1.txt", "content A")
+            val file2 = createFile(tempDir, "diff2.txt", "content B")
 
             // When: generating fingerprints for both
             val hash1 = FileFingerPrint.generate(file1, HashAlgorithm.MD5)
@@ -183,10 +183,5 @@ class FileFingerPrintTest {
         }
     }
 
-    // Helper function to create temp files with UTF-8 content
-    private fun createTempFile(tempDir: Path, name: String, content: String): File {
-        val path = tempDir.resolve(name)
-        Files.write(path, content.toByteArray(Charsets.UTF_8))
-        return path.toFile()
-    }
+
 }

@@ -2,6 +2,8 @@ package com.eyuppastirmaci.core.engine
 
 import com.eyuppastirmaci.core.analysis.FileFingerPrint
 import com.eyuppastirmaci.model.DuplicateGroup
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
@@ -14,7 +16,7 @@ object DuplicateFinder {
      * Finds all duplicate files in the given list.
      * Returns a map of hash -> DuplicateGroup (only for files with duplicates).
      */
-    fun find(files: List<File>): Map<String, DuplicateGroup> {
+    suspend fun find(files: List<File>): Map<String, DuplicateGroup> = withContext(Dispatchers.IO) {
         // Group files by their content hash
         val hashGroups = files
             .filter { it.isFile }
@@ -22,7 +24,7 @@ object DuplicateFinder {
             .filterValues { it.size > 1 } // Keep only duplicates
 
         // Convert to DuplicateGroup (oldest = original)
-        return hashGroups.mapValues { (_, groupedFiles) ->
+        hashGroups.mapValues { (_, groupedFiles) ->
             val sorted = groupedFiles.sortedBy { it.lastModified() }
             DuplicateGroup(
                 original = sorted.first(),

@@ -1,6 +1,7 @@
 package com.eyuppastirmaci.core.engine
 
 import com.eyuppastirmaci.util.TestFileUtil.createFile
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -11,7 +12,7 @@ import java.nio.file.Path
 class DuplicateFinderTest {
 
     @Test
-    fun `should return empty map when no duplicates exist`(@TempDir tempDir: Path) {
+    fun `should return empty map when no duplicates exist`(@TempDir tempDir: Path) = runTest {
         // Given: files with unique content
         createFile(tempDir, "a.txt", "content A")
         createFile(tempDir, "b.txt", "content B")
@@ -25,7 +26,7 @@ class DuplicateFinderTest {
     }
 
     @Test
-    fun `should group files with identical content`(@TempDir tempDir: Path) {
+    fun `should group files with identical content`(@TempDir tempDir: Path) = runTest {
         // Given: two files with same content
         createFile(tempDir, "original.txt", "same content")
         createFile(tempDir, "copy.txt", "same content")
@@ -40,7 +41,7 @@ class DuplicateFinderTest {
     }
 
     @Test
-    fun `should identify oldest file as original`(@TempDir tempDir: Path) {
+    fun `should identify oldest file as original`(@TempDir tempDir: Path) = runTest {
         // Given: duplicate files with different timestamps
         createFile(tempDir, "old.txt", "duplicate")
         Thread.sleep(100)
@@ -56,7 +57,7 @@ class DuplicateFinderTest {
     }
 
     @Test
-    fun `should handle multiple duplicate groups`(@TempDir tempDir: Path) {
+    fun `should handle multiple duplicate groups`(@TempDir tempDir: Path) = runTest {
         // Given: two separate groups of duplicates
         createFile(tempDir, "a1.txt", "group A")
         createFile(tempDir, "a2.txt", "group A")
@@ -72,7 +73,7 @@ class DuplicateFinderTest {
     }
 
     @Test
-    fun `should list copies separately from original`(@TempDir tempDir: Path) {
+    fun `should list copies separately from original`(@TempDir tempDir: Path) = runTest {
         // Given: one original and two copies
         createFile(tempDir, "first.txt", "content")
         Thread.sleep(50)

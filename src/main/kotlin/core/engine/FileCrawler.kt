@@ -1,5 +1,7 @@
 package com.eyuppastirmaci.core.engine
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
@@ -11,10 +13,10 @@ object FileCrawler {
      * Scans a directory and returns all files (excluding directories).
      * Traverses subdirectories recursively.
      */
-    fun scan(directory: File): List<File> {
-        if (!directory.exists() || !directory.isDirectory) return emptyList()
+    suspend fun scan(directory: File): List<File> = withContext(Dispatchers.IO) {
+        if (!directory.exists() || !directory.isDirectory) return@withContext emptyList()
 
-        return directory.walkTopDown()
+        directory.walkTopDown()
             .filter { it.isFile }
             .toList()
     }
