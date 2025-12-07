@@ -2,6 +2,7 @@ package com.eyuppastirmaci.cli
 
 import com.eyuppastirmaci.core.engine.DuplicateFinder
 import com.eyuppastirmaci.core.engine.FileCrawler
+import com.eyuppastirmaci.formatter.FileSizeFormatter
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
@@ -49,13 +50,13 @@ class AnalyzeCommand : CliktCommand(
         echo("Analysis Results")
         echo("----------------")
         echo("Total files:       $totalFiles")
-        echo("Total size:        ${formatSize(totalSize)}")
+        echo("Total size:        ${FileSizeFormatter.format(totalSize)}")
         echo()
         echo("Duplicates")
         echo("----------")
         echo("Duplicate groups:  $duplicateGroups")
         echo("Duplicate files:   $duplicateFiles")
-        echo("Wasted space:      ${formatSize(wastedSpace)}")
+        echo("Wasted space:      ${FileSizeFormatter.format(wastedSpace)}")
 
         if (showDuplicates && duplicates.isNotEmpty()) {
             echo()
@@ -74,15 +75,6 @@ class AnalyzeCommand : CliktCommand(
         if (duplicates.isNotEmpty()) {
             echo()
             echo("Tip: Use 'organize' command to clean up duplicates")
-        }
-    }
-
-    private fun formatSize(bytes: Long): String {
-        return when {
-            bytes >= 1_073_741_824 -> "%.2f GB".format(bytes / 1_073_741_824.0)
-            bytes >= 1_048_576 -> "%.2f MB".format(bytes / 1_048_576.0)
-            bytes >= 1_024 -> "%.2f KB".format(bytes / 1_024.0)
-            else -> "$bytes bytes"
         }
     }
 }
