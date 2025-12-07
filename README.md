@@ -4,6 +4,10 @@ A high-performance CLI tool for organizing messy directories. It detects duplica
 
 ---
 
+![StrataOptima Demo](.github/assets/example.gif)
+
+---
+
 ## ✨ Features
 
 - **🔍 Deep Duplicate Detection:** Calculates MD5/SHA-256 hashes to find identical files even if they have different names (e.g., `thesis.pdf` and `thesis (1).pdf`).
